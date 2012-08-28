@@ -17,6 +17,13 @@
 # limitations under the License.
 #
 
+
+  n_nodes = search(:node, "role:cloudfoundry_nats_server_2")
+  n_node = n_nodes.first
+  
+  node.set[:cloudfoundry_common][:nats_server][:host] = n_node.ipaddress
+
+
 include_recipe "apt"
 include_recipe "cloudfoundry-common::directories"
 include_recipe "cloudfoundry-common::ruby_1_9_2"
