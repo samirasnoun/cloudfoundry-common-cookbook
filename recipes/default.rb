@@ -16,13 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+if Chef::Config[:solo]
 
+  Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
 
-  n_nodes = search(:node, "role:cloudfoundry_nats_server_2")
-  n_node = n_nodes.first
+else
   
-  node.set[:cloudfoundry_common][:nats_server][:host] = n_node.ipaddress
+  n_nodes = search(:node, "role:cloudfoundry_nats_server")
 
+  if n_nodes.count > 0 
+     n_node = n_nodes.first
+     node.set['cloudfoundry_common']['nats_server']['host'] = n_node.ipaddress
+  end
+
+end
 
 include_recipe "apt"
 include_recipe "cloudfoundry-common::directories"
