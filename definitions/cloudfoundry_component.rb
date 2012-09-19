@@ -17,6 +17,15 @@ define :cloudfoundry_component do
     ruby_version node.cloudfoundry_common.ruby_1_9_2_version
   end
 
+Chef::Log.warn("+++++++++++ ruby_path = " + ruby_path )
+Chef::Log.warn("+++++++++++  = component_name " + component_name )
+Chef::Log.warn("+++++++++++  = install_path " + install_path )
+Chef::Log.warn("+++++++++++  = "  )
+Chef::Log.warn("+++++++++++  = "  )
+Chef::Log.warn("+++++++++++  = "  )
+Chef::Log.warn("+++++++++++  = "  )
+
+
   bash "install #{component_name} gems" do
     user node.cloudfoundry_common.user
     cwd  install_path
