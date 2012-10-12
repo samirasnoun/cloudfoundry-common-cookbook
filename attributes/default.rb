@@ -73,3 +73,5 @@ default['cloudfoundry_common']['pid_dir']    = "/var/run/cloudfoundry"
 # The token to use to authenticate services to cloudfoundry. This _may_
 # not be safe to change.
 default['cloudfoundry_common']['service_token'] = "0xdeadbeef"
+default['cloudfoundry_common']['cf_session']['id'] = ''
+default['cloudfoundry_common']['cf_session']['name'] = ''
