@@ -17,22 +17,30 @@
 # limitations under the License.
 #
 if Chef::Config[:solo]
-     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-else
-    # n_nodes_nats = search(:node, "role:cloudfoundry_nats_server")
-    n_nodes_nats = search(:node, "role:cloudfoundry_nats_server AND chef_environment:dev_version6" )
-     if (n_nodes_nats.count > 0) then
-     n_nodes_nats.each {|k|
-       if (k['nats_server']['cf_session']['id'] == node['cloudfoundry_common']['cf_session']['id']) then
-          node.set['cloudfoundry_common']['nats_server']['host'] = k['ipaddress']
-       end
-     }
-     else(node['cloudfoundry_common']['nats_server']['host']  == nil )  
-        Chef::Log.warn("No nats servers found for this cloud foundry session =  " + node.ipaddress)
-     end 
+     
+    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
 
+else
+    
+    cf_id_node = node['cloudfoundry_common']['cf_session']['cf_id']
+    n_nodes_nats = search(:node, "role:cloudfoundry_nats_server AND cf_id:#{cf_id_node}" )
+   
+    while n_nodes_nats.count < 1 
+        Chef::Log.warn("Waiting for nats .... I am sleeping 7 sec")
+        sleep 7
+        n_nodes_nats = search(:node, "role:cloudfoundry_nats_server AND cf_id:#{cf_id_node}")        
+       end
+    Chef::Log.warn("Nats server found i am saving it")
+ 
+     k = n_nodes_nats.first
+          node.set['cloudfoundry_common']['nats_server']['host'] = k['ipaddress']
+
+     node.save 
+
+     if platform?("ubuntu") 
      include_recipe "apt"
      include_recipe "cloudfoundry-common::directories"
      include_recipe "cloudfoundry-common::ruby_1_9_2"
-end
+     end
 
+end
